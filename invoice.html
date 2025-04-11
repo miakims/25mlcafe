@@ -1,0 +1,266 @@
+코드 네 걸로 말고 내가 공유주는 아래 코드로 사용하자고
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tac Invoice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    .invoice-box {
+      max-width: 800px;
+      padding: 30px;
+      border: none;
+      box-shadow: none;
+    }
+    .center {
+      text-align: center;
+    }
+    .header-info {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .company-details {
+      flex: 1;
+      line-height: 1.2;
+    }
+    .logo {
+      max-width: 150px;
+      margin-left: 20px;
+    }
+    .header-info p {
+      margin: 2px 0 6px 0;
+    }
+    .invoice-date {
+      margin-top: 5px;
+    }
+    .invoice-date label {
+      margin-right: 10px;
+    }
+    .invoice-date-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .invoice-date-line input {
+      width: auto;
+      min-width: 150px;
+      flex-shrink: 0;
+    }
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #eee;
+    }
+    input {
+      padding: 6px;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 5px 0;
+    }
+    input.preview-mode {
+      border: none;
+      background: transparent;
+      pointer-events: none;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    .totals {
+      margin-top: 20px;
+      width: 100%;
+      text-align: right;
+    }
+    .totals div {
+      margin-bottom: 5px;
+    }
+    .btn {
+      margin-top: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 15px;
+    }
+    #previewContainer {
+      display: none;
+      margin-top: 30px;
+      text-align: center;
+    }
+    #previewContainer img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+      .payment-details {
+      margin-top: 30px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .payment-details a {
+      color: #000;
+      text-decoration: none;
+    }
+      .invoice-to-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: normal;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    .invoice-to-line label {
+      white-space: nowrap;
+    }
+
+    .invoice-to-line input {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0;
+  width: auto;
+  flex-grow: 1;
+}
+  </style>
+</head>
+<body>
+  <div class="invoice-box" id="invoice">
+    <h1 class="center" style="margin-bottom: 90px;">Tax Invoice</h1>
+
+    <div class="header-info">
+      <div class="company-details">
+        <p><strong>25ml cafe</strong></p>
+        <p>72a Hobsonville Point Road, Hobsonville, Auckland 0616</p>
+        <p>Phone: 09 416 9615</p>
+        <div class="invoice-date invoice-date-line">
+          <label for="invoiceDate">Invoice Date</label>
+          <input type="text" id="invoiceDate" placeholder="10/04/2025">
+        </div>
+      </div>
+      <div>
+        <img src="./img/logo.png" alt="Company Logo" class="logo">
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="invoice-to-line">
+  <label for="invoiceTo"><strong>Invoice To</strong></label>
+  <input type="text" id="invoiceTo" placeholder="Client/Company Name">
+</div>
+
+    <table>
+      <colgroup>
+        <col style="width: 60%">
+        <col style="width: 20%">
+        <col style="width: 20%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Total</th>
+          <th>GST</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" id="description" style="width: 100%;"></td>
+          <td style="text-align: right; position: relative;"><span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-weight: bold;">$</span><input type="number" id="totalAmount" style="text-align: right; padding-left: 20px;" oninput="updateSummary()"></td>
+          <td style="text-align: right; position: relative;"><span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-weight: bold;">$</span><input type="number" id="gstAmount" style="text-align: right; padding-left: 20px;" oninput="updateSummary()"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div>Sub Total: $<span id="subTotal">0.00</span></div>
+      <div>GST: $<span id="gstTotal">0.00</span></div>
+      <div><strong>Total: $<span id="finalTotal">0.00</span></strong></div>
+    </div>
+
+    <hr>
+    <div class="payment-details">
+      <p><strong>Payment Details:</strong></p>
+      <p>Please pay by due date to<br>
+      Ada Kichen Limited<br>
+      06-0265-0679151-00</p>
+      <p>For all copies of invoices please email <a href="mailto:appleliu411@gmail.com">appleliu411@gmail.com</a></p>
+    </div>
+  </div>
+  </div>
+
+  <button class="btn" onclick="previewInvoice()">Preview Invoice</button>
+  <button class="btn" onclick="downloadPDF()">Download as PDF</button>
+
+  <div id="previewContainer">
+    <h3>Invoice Preview</h3>
+    <img id="previewImage" src="" alt="Invoice Preview">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    function updateSummary() {
+      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
+      const gst = parseFloat(document.getElementById('gstAmount').value) || 0;
+      const final = total + gst;
+
+      document.getElementById('subTotal').textContent = total.toFixed(2);
+      document.getElementById('gstTotal').textContent = gst.toFixed(2);
+      document.getElementById('finalTotal').textContent = final.toFixed(2);
+    }
+
+    function setPreviewMode(enabled) {
+      const inputs = document.querySelectorAll('#invoice input');
+      inputs.forEach(input => {
+        if (enabled) {
+          input.classList.add('preview-mode');
+        } else {
+          input.classList.remove('preview-mode');
+        }
+      });
+    }
+
+    async function previewInvoice() {
+      setPreviewMode(true);
+      const invoice = document.getElementById("invoice");
+      const previewContainer = document.getElementById("previewContainer");
+      const previewImage = document.getElementById("previewImage");
+
+      await html2canvas(invoice, { backgroundColor: null }).then((canvas) => {
+        previewImage.src = canvas.toDataURL("image/png");
+        previewContainer.style.display = "block";
+        setPreviewMode(false);
+      });
+    }
+
+    async function downloadPDF() {
+      setPreviewMode(true);
+      const { jsPDF } = window.jspdf;
+      const invoice = document.getElementById("invoice");
+
+      await html2canvas(invoice, { backgroundColor: null }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("invoice.pdf");
+        setPreviewMode(false);
+      });
+    }
+  </script>
+</body>
+</html>
