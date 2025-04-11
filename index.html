@@ -151,4 +151,114 @@
   </style>
 </head>
 <body>
-  <!-- (body content remains unchanged) -->
+  <div class="invoice-box" id="invoice">
+    <h1 class="center" style="margin-bottom: 90px;">Tax Invoice</h1>
+    <div class="header-info">
+      <div class="company-details">
+        <p><strong>25ml cafe</strong></p>
+        <p>72a Hobsonville Point Road, Hobsonville, Auckland 0616</p>
+        <p>Phone: 09 416 9615</p>
+        <div class="invoice-date invoice-date-line">
+          <label for="invoiceDate">Invoice Date</label>
+          <input type="text" id="invoiceDate" placeholder="10/04/2025">
+        </div>
+      </div>
+      <div>
+        <img src="./img/logo.png" alt="Company Logo" class="logo">
+      </div>
+    </div>
+    <hr>
+    <div class="invoice-to-line">
+      <label for="invoiceTo"><strong>Invoice To</strong></label>
+      <input type="text" id="invoiceTo" placeholder="Client/Company Name">
+    </div>
+    <table>
+      <colgroup>
+        <col style="width: 60%">
+        <col style="width: 20%">
+        <col style="width: 20%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Total</th>
+          <th>GST</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" id="description" style="width: 100%;"></td>
+          <td style="text-align: right; position: relative;"><span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-weight: bold;">$</span><input type="number" id="totalAmount" style="text-align: right; padding-left: 20px;" oninput="updateSummary()"></td>
+          <td style="text-align: right; position: relative;"><span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-weight: bold;">$</span><input type="number" id="gstAmount" style="text-align: right; padding-left: 20px;" oninput="updateSummary()"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="totals">
+      <div>Sub Total: $<span id="subTotal">0.00</span></div>
+      <div>GST: $<span id="gstTotal">0.00</span></div>
+      <div><strong>Total: $<span id="finalTotal">0.00</span></strong></div>
+    </div>
+    <hr>
+    <div class="payment-details">
+      <p><strong>Payment Details:</strong></p>
+      <p>Please pay by due date to<br>Ada Kichen Limited<br>06-0265-0679151-00</p>
+      <p>For all copies of invoices please email <a href="mailto:appleliu411@gmail.com">appleliu411@gmail.com</a></p>
+    </div>
+  </div>
+  <button class="btn" onclick="previewInvoice()">Preview Invoice</button>
+  <button class="btn" onclick="downloadPDF()">Download as PDF</button>
+  <div id="previewContainer">
+    <h3>Invoice Preview</h3>
+    <img id="previewImage" src="" alt="Invoice Preview">
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    function updateSummary() {
+      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
+      const gst = parseFloat(document.getElementById('gstAmount').value) || 0;
+      const final = total + gst;
+      document.getElementById('subTotal').textContent = total.toFixed(2);
+      document.getElementById('gstTotal').textContent = gst.toFixed(2);
+      document.getElementById('finalTotal').textContent = final.toFixed(2);
+    }
+
+    function setPreviewMode(enabled) {
+      const inputs = document.querySelectorAll('#invoice input');
+      inputs.forEach(input => {
+        if (enabled) {
+          input.classList.add('preview-mode');
+        } else {
+          input.classList.remove('preview-mode');
+        }
+      });
+    }
+
+    async function previewInvoice() {
+      setPreviewMode(true);
+      const invoice = document.getElementById("invoice");
+      const previewContainer = document.getElementById("previewContainer");
+      const previewImage = document.getElementById("previewImage");
+      await html2canvas(invoice, { backgroundColor: null, scrollY: -window.scrollY }).then((canvas) => {
+        previewImage.src = canvas.toDataURL("image/png");
+        previewContainer.style.display = "block";
+        setPreviewMode(false);
+      });
+    }
+
+    async function downloadPDF() {
+      setPreviewMode(true);
+      const { jsPDF } = window.jspdf;
+      const invoice = document.getElementById("invoice");
+      await html2canvas(invoice, { backgroundColor: null, scrollY: -window.scrollY }).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("invoice.pdf");
+        setPreviewMode(false);
+      });
+    }
+  </script>
