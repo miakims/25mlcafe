@@ -58,16 +58,18 @@
       border-top: 1px solid #eee;
     }
     input {
-      padding: 6px;
-      width: 100%;
-      box-sizing: border-box;
-      margin: 5px 0;
+      padding: 12px 6px;
       line-height: 1.4;
+      height: auto; /* ✅ 높이 고정 방지 */
+      min-height: 40px; /* ✅ 세로 공간 확보 */
+      font-size: 16px; /* ✅ iOS 줌 방지용 최소 글자 크기 */
     }
+
     input.preview-mode {
       border: none;
       background: transparent;
       pointer-events: none;
+      min-height: 40px;
     }
     table {
       width: 100%;
